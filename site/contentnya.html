@@ -1,0 +1,35 @@
+	<div id="contenya" class="bgdefault border-content">
+		<!-- INCLUDE site/nav.top.html -->
+		<!-- IF ERROR_MSG -->
+		<div id="error" class="hot-red">{ERROR_MSG}</div>
+		<!-- ENDIF -->
+		<!-- IF VIEW_PAGE == INDEX -->
+		<!-- INCLUDE site/site_root.html -->
+		<!-- ELSEIF VIEW_PAGE == NA -->
+		<div class="header">
+			<h2>Congratulations! You broke it. #404</h2>
+		</div>
+		<!-- ELSEIF VIEW_PAGE == SEARCH -->
+		<!-- INCLUDE site/page_search.html -->
+		<!-- ELSEIF VIEW_PAGE == USER -->
+		<!-- INCLUDE site/page_channel.html -->
+		<!-- ELSEIF VIEW_PAGE == VIDEO -->
+		<!-- INCLUDE site/page_videodetails.html -->
+		<!-- ELSEIF VIEW_PAGE == ABOUT -->
+		<!-- INCLUDE site/page_about.html -->
+		<!-- ELSEIF VIEW_PAGE == CONTACT -->
+		<!-- INCLUDE site/page_contact.html -->
+		<!-- ELSEIF VIEW_PAGE == PRIVACY -->
+		<!-- INCLUDE site/page_privacy.html -->
+		<!-- ELSEIF VIEW_PAGE == PLUGIN -->
+		<!-- INCLUDE site/page_plugin.html -->
+		<!-- ELSEIF VIEW_PAGE == API -->
+		<div class="header">
+			<h2>{L_DEVELOPER_API}</h2>
+		</div>
+		<!-- INCLUDE site/playground.html -->
+		<!-- ELSE -->
+		Congratulations! You broke it.
+		<!-- ENDIF -->
+	</div>
+	<!-- INCLUDE site/nav.foot.html -->

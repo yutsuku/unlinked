@@ -1,0 +1,274 @@
+<!doctype html>
+<html>
+<head>
+<title>unlinked - Playground</title>
+<style type="text/css">
+html, body { 
+	background: #F1F1F1;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	color: #222222;
+}
+h2, p {
+	margin: 0px;
+	padding: 0px;
+}
+#containyan {
+	width: 920px;
+	margin: 0 auto;
+}
+input[type="text"] { 
+	background: #E1E1E1;
+	border-radius: 3px;
+	border: 0px;
+	box-shadow: inset 0px -1px 3px #C2BFC0, 0px 1px 1px #FFFFFF;
+	height: 25px;
+	padding: 4px 8px;
+	width: 150px;
+}
+input[type="submit"] { 
+	background: #ca2929;
+	color: #ffffff;
+	padding: 8px 25px;
+	border: 1px solid #ff3600;
+	box-shadow: inset 0px 15px 15px #fa3e25;
+	border-radius: 3px;
+	border-bottom-color: #f00;	
+}
+.error {
+	background: rgb(161,91,91);
+	background: -moz-linear-gradient(top, rgba(161,91,91,1) 0%, rgba(116,60,60,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(161,91,91,1)), color-stop(100%,rgba(116,60,60,1)));
+	background: -webkit-linear-gradient(top, rgba(161,91,91,1) 0%,rgba(116,60,60,1) 100%);
+	background: -o-linear-gradient(top, rgba(161,91,91,1) 0%,rgba(116,60,60,1) 100%);
+	background: -ms-linear-gradient(top, rgba(161,91,91,1) 0%,rgba(116,60,60,1) 100%);
+	background: linear-gradient(to bottom, rgba(161,91,91,1) 0%,rgba(116,60,60,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a15b5b', endColorstr='#743c3c',GradientType=0 );
+	text-shadow: 0px 2px 1px #311010;
+}
+.msg {
+	border-radius: 5px;
+	text-align: center;
+	padding: 15px 0px;
+	color: #ffffff;
+	margin: 15px auto;
+	font-family: "Tahoma", sans-serif;
+	font-size: 19px;
+}
+.fancy {
+	background: #F1F1F1;
+	border-radius: 3px;
+	box-shadow: 0px 2px 5px #C2BFC0, inset 0px 0px 2px 1px #FFFFFF;
+	margin: 15px;
+	padding: 15px;
+}
+.parm { color: #007000; font: 1em/1.5 "Droid Sans Mono", monospace; font-weight: bold; }
+.parmR { color: #DD4B39; font: 1em/1.5 "Droid Sans Mono", monospace; font-weight: bold; }
+.italic { color: #000000; font: 1em/1.5 "Droid Sans Mono", monospace; }
+.sandbox input {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+.sandbox {
+	background: #f5f5f5;
+	padding: 25px;
+	border: 1px solid #dedede;
+}
+table { width: 100%; border-spacing:0; border-collapse:collapse; }
+table td { padding-bottom: 20px; padding-top: 20px; }
+.sandbox tr {
+	border-bottom: 1px solid #dbdbdb;
+}
+.desc { color: #666666; }
+.float-right { float: right; text-align: right; }
+.right { text-align: right; width: 140px; }
+.clear { clear: both; }
+.center { text-align: center; width: 230px; }
+.spacer { height: 20px; }
+#state div img { display:inline-block; vertical-align:middle; }
+pre { 
+	background-color: #FAFAFA;
+	border: 1px solid #BBBBBB;
+	overflow: auto;
+	padding: 6px 10px;
+	color: #007000;
+}
+.hidden {
+	display: none;
+}
+.results { color: #666666; }
+h1, h2, h3 { text-shadow: 0px 1px 1px #fff; }
+</style>
+<!--<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#containyan h1").prepend("$");
+	var API = "http://127.0.0.1:134/minefield/unlinked/api/";
+	var dom = {
+		state_idle: "#state-idle",
+		state_loading: "#state-loading",
+		state_ready: "#state-data-ready",
+		state_error: "#state-error",
+		state_time: "p.time",
+		state_tload: "p.exec",
+		
+		request: "#result-details",
+		request_query: "#result-request",
+		request_response: "#result-response",
+		
+		awesome_button: "#exec-query",
+		hidden: "hidden" // css class, not used
+	};
+	var exec_format_str = {
+		now: "A second ago",
+		minute: "A minute ago",
+		more: "minutes ago"
+	}
+	var sTimer = false;
+	var sTimerCounts = 0;
+	var updateLabel = function() {
+		if ( sTimerCounts == 0 ) {
+			$(dom.state_time).text(exec_format_str.minute);
+		} else {
+			$(dom.state_time).text(sTimerCounts + " " + exec_format_str.more);
+		}
+		sTimerCounts++;
+		sTimer = window.setTimeout(updateLabel, 60000);
+	}
+	$(dom.awesome_button).click(function() {
+		$(dom.request_query).text("GET " + API + "?" + build_query());
+		$(dom.state_idle).hide();
+		$(dom.state_ready).hide();
+		$(dom.state_error).hide();
+		$(dom.state_loading).show();
+		window.clearTimeout(sTimer);
+		sTimer = window.setTimeout(updateLabel, 60000);
+		sTimerCounts++;
+		var start = Date.now();
+		$.getJSON( API + "?" + build_query() )
+		.done(function( json ) {
+			$(dom.state_loading).hide();
+			$(dom.state_ready).show();
+			var end = Date.now() - start;
+			$(dom.state_time).text(exec_format_str.now);
+			$(dom.state_tload).text(end + "ms");
+			$(dom.request_response).text(JSON.stringify(json, null, 2));
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			$(dom.state_loading).hide();
+			$(dom.state_error).show();
+			var end = Date.now() - start;
+			$(dom.state_time).text(exec_format_str.now);
+			$(dom.state_tload).text(end + "ms");
+			var err = "Request failed: " + textStatus + ', ' + error;
+			$(dom.request_response).text(err);
+		});
+		$(dom.request).show();
+	});
+	var build_query = function() {
+		var parms = {};
+		if($("input[name='action']").val()!="") { parms.action = $("input[name='action']").val(); }
+		if($("input[name='video']").val()!="") { parms.video = $("input[name='video']").val(); }
+		if($("input[name='user']").val()!="") { parms.user = $("input[name='user']").val(); }
+		if($("input[name='channel']").val()!="") { parms.channel = $("input[name='channel']").val(); }
+		if($("input[name='uploads']").val()!="") { parms.uploads = $("input[name='uploads']").val(); }
+		if($("input[name='page']").val()!="") { parms.page = $("input[name='page']").val(); }
+		if($("input[name='callback']").val()!="") { parms.callback = $("input[name='callback']").val(); }
+		return $.param(parms);
+	}
+});
+</script>
+</head>
+<body>
+<div id="containyan">
+	<h1>unlinked Playground</h1>
+	<div class="sandbox">
+		<h3>HTTP request</h3>
+		<pre>GET http://127.0.0.1:134/minefield/unlinked/api/</pre>
+	</div>
+	<div class="spacer"></div>
+	<div class="sandbox">
+		<table>
+			<tr>
+				<td class="right parmR">action</td>
+				<td class="center"><input type="text" name="action" value="get" /></td>
+				<td class="desc">accepted values: <span class="parm">get</span>, <span class="parm">beacon</span></td>
+			</tr>
+			<tr>
+				<td class="right">video</td>
+				<td class="center"><input type="text" name="video" value="AnduZlpu6ok" /></td>
+				<td class="desc">YouTube <span class="parm">videoID</span>, the <span class="italic">v</span> parameter in the URL, also known as the <span class="italic">id</span> parameter in the YouTube video API</td>
+			</tr>
+			<tr>
+				<td class="right">user</td>
+				<td class="center"><input type="text" name="user" /></td>
+				<td class="desc">YouTube <span class="parm">userID</span> - case sensitive, part of the user profile URL. For example <pre>http://youtube.com/user/<span class="parm">userID</span></pre> It may be different than the displayed name in channel. This is also the <span class="italic">forUsername</span> parameter in the YouTube channel API</td>
+			</tr>
+			<tr>
+				<td class="right">channel</td>
+				<td class="center"><input type="text" name="channel" value="UCzPg4vEL37ZqXL47rJbBv9w" /></td>
+				<td class="desc">YouTube <span class="parm">channelID</span>, the <span class="italic">id</span> parameter in the YouTube channel API</td>
+			</tr>
+			<tr>
+				<td class="right">uploads</td>
+				<td class="center"><input type="text" name="uploads" value="UCBFAN2kqE4ZYRQcvy93Vbnw"/></td>
+				<td class="desc">YouTube <span class="parm">channelID</span>, the <span class="italic">id</span> parameter in the YouTube channel API</td>
+			</tr>
+			<tr>
+				<td class="right">page</td>
+				<td class="center"><input type="text" name="page" value="1"/></td>
+				<td class="desc">user uploads page that you would like fetch to, default is 1</td>
+			</tr>
+			<tr>
+				<td class="right">callback</td>
+				<td class="center"><input type="text" name="callback" /></td>
+				<td class="desc">User specific <span class="parm">function</span>, allows you to make cross-domain requests using JSONP</td>
+			</tr>
+			<tr>
+				<td class="right"><span class="parmR">bold red</span> = required</td>
+				<td class="center"><input type="submit" id="exec-query" value="Execute Query" /></td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+	<div class="spacer"></div>
+	<div class="sandbox results">
+		<div id="state">
+			<div id="state-idle">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/010.gif" alt="" />
+				<span>Waiting for action</span>
+			</div>
+			<div id="state-loading" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/225.gif" alt="" />
+				<span>Working</span>
+			</div>
+			<div id="state-data-ready" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/258.gif" alt="" />
+				<span>Data ready</span>
+				<div class="float-right">
+					<p class="time">minute ago</p>
+					<p class="exec">.51ms</p>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div id="state-error" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/245.gif" alt="" />
+				<span>Something went horribly wrong...</span>
+				<div class="float-right">
+					<p class="time">minute ago</p>
+					<p class="exec">.51ms</p>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div id="result-details" class="hidden">
+			<h3>Request</h3>
+			<pre id="result-request"><!--GET http://site.com/api?action=get&amp;video=cs8M3MQLfw8--></pre>
+			<h3>Response</h3>
+			<pre id="result-response"></pre>
+		</div>
+	</div>
+</div>
+</body>
+</html>

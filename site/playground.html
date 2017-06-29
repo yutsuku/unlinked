@@ -1,0 +1,184 @@
+<script type="text/javascript">
+function checkJquery() {
+    if (window.jQuery) {
+        jqueryLoaded();
+    } else {
+        window.setTimeout(checkJquery, 100);
+    }
+}
+checkJquery();
+function jqueryLoaded() {
+$(document).ready(function() {
+	$("#playground h1").prepend("$");
+	var API = "http://127.0.0.1:134/minefield/unlinked/api/";
+	//var API = "http://yutsuku.net/unlinked/api/";
+	var dom = {
+		state_idle: "#state-idle",
+		state_loading: "#state-loading",
+		state_ready: "#state-data-ready",
+		state_error: "#state-error",
+		state_time: "p.time",
+		state_tload: "p.exec",
+		
+		request: "#result-details",
+		request_query: "#result-request",
+		request_response: "#result-response",
+		
+		awesome_button: "#exec-query",
+		hidden: "hidden" // css class, not used
+	};
+	var exec_format_str = {
+		now: "{L_1_SECOND_AGO}",
+		minute: "{1_MINUTE_AGO}",
+		two_three_four: "{L_234_MINUTE_AGO}",
+		more: "{L_N_MINUTE_AGO}"
+	}
+	var sTimer = false;
+	var sTimerCounts = 0;
+	var updateLabel = function() {
+		if ( sTimerCounts == 0 ) {
+			$(dom.state_time).text(exec_format_str.now);
+		} else if ( sTimerCounts == 1 ) {
+			$(dom.state_time).text(exec_format_str.minute);
+		} else if ( sTimerCounts > 1 && sTimerCounts < 4 ) {
+			$(dom.state_time).text(sTimerCounts + " " + exec_format_str.two_three_four);
+		} else {
+			$(dom.state_time).text(sTimerCounts + " " + exec_format_str.more);
+		}
+		sTimerCounts++;
+		sTimer = window.setTimeout(updateLabel, 60000);
+	}
+	$(dom.awesome_button).click(function() {
+		sTimerCounts = 0;
+		$(dom.request_query).text("GET " + API + "?" + build_query());
+		$(dom.state_idle).hide();
+		$(dom.state_ready).hide();
+		$(dom.state_error).hide();
+		$(dom.state_loading).show();
+		window.clearTimeout(sTimer);
+		sTimer = window.setTimeout(updateLabel, 60000);
+		sTimerCounts++;
+		var start = Date.now();
+		$.getJSON( API + "?" + build_query() )
+		.done(function( json ) {
+			$(dom.state_loading).hide();
+			$(dom.state_ready).show();
+			var end = Date.now() - start;
+			$(dom.state_time).text(exec_format_str.now);
+			$(dom.state_tload).text(end + "{L_MS}");
+			$(dom.request_response).text(JSON.stringify(json, null, 2));
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			$(dom.state_loading).hide();
+			$(dom.state_error).show();
+			var end = Date.now() - start;
+			$(dom.state_time).text(exec_format_str.now);
+			$(dom.state_tload).text(end + "{L_MS}");
+			var err = "{L_REQUEST_FAILED}: " + textStatus + ', ' + error;
+			$(dom.request_response).text(err);
+		});
+		$(dom.request).show();
+	});
+	var build_query = function() {
+		var parms = {};
+		if($("input[name='action']").val()!="") { parms.action = $("input[name='action']").val(); }
+		if($("input[name='video']").val()!="") { parms.video = $("input[name='video']").val(); }
+		if($("input[name='user']").val()!="") { parms.user = $("input[name='user']").val(); }
+		if($("input[name='channel']").val()!="") { parms.channel = $("input[name='channel']").val(); }
+		if($("input[name='uploads']").val()!="") { parms.uploads = $("input[name='uploads']").val(); }
+		if($("input[name='page']").val()!="") { parms.page = $("input[name='page']").val(); }
+		if($("input[name='callback']").val()!="") { parms.callback = $("input[name='callback']").val(); }
+		return $.param(parms);
+	}
+});
+}
+</script>
+<div id="playground">
+	<h1>{L_UNLINKED_PLAYGROUND}</h1>
+	<div class="sandbox">
+		<h3>{L_HTTP_REQUEST}</h3>
+		<pre>GET http://yutsuku.net/unlinked/api/</pre>
+	</div>
+	<div class="spacer"></div>
+	<div class="sandbox">
+		<table>
+			<tr>
+				<td class="right parmR">action</td>
+				<td class="center"><input type="text" name="action" value="get" /></td>
+				<td class="desc">{L_ACCEPTED_VALUES}: <span class="parm">get</span>, <span class="parm">beacon</span></td>
+			</tr>
+			<tr>
+				<td class="right">video</td>
+				<td class="center"><input type="text" name="video" value="AnduZlpu6ok" /></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_1}</td>
+			</tr>
+			<tr>
+				<td class="right">user</td>
+				<td class="center"><input type="text" name="user" /></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_2}</td>
+			</tr>
+			<tr>
+				<td class="right">channel</td>
+				<td class="center"><input type="text" name="channel" value="UCzPg4vEL37ZqXL47rJbBv9w" /></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_3}</td>
+			</tr>
+			<tr>
+				<td class="right">uploads</td>
+				<td class="center"><input type="text" name="uploads" value="UCBFAN2kqE4ZYRQcvy93Vbnw"/></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_4}</td>
+			</tr>
+			<tr>
+				<td class="right">page</td>
+				<td class="center"><input type="text" name="page" value="1"/></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_5}</td>
+			</tr>
+			<tr>
+				<td class="right">callback</td>
+				<td class="center"><input type="text" name="callback" /></td>
+				<td class="desc">{L_LONGTEXT_API_LINE_6}</td>
+			</tr>
+			<tr>
+				<td class="right"><span class="parmR">{L_BOLD_RED}</span> = {L_REQUIRED}</td>
+				<td class="center"><input type="submit" id="exec-query" value="{L_EXECUTE_QUERY}" /></td>
+				<td></td>
+			</tr>
+		</table>
+	</div>
+	<div class="spacer"></div>
+	<div class="sandbox results">
+		<div id="state">
+			<div id="state-idle">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/010.gif" alt="" />
+				<span>{L_WAITING_FOR_ACTION}</span>
+			</div>
+			<div id="state-loading" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/225.gif" alt="" />
+				<span>{L_WORKING}</span>
+			</div>
+			<div id="state-data-ready" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/258.gif" alt="" />
+				<span>{L_DATA_READY}</span>
+				<div class="float-right">
+					<p class="time"></p>
+					<p class="exec"></p>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div id="state-error" class="hidden">
+				<img src="http://res.nimg.jp/img/base/head/icon/nico/245.gif" alt="" />
+				<span>{L_SOMETHING_WENT_HORRIBLY_WRONG}</span>
+				<div class="float-right">
+					<p class="time"></p>
+					<p class="exec"></p>
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		<div id="result-details" class="hidden">
+			<h3>{L_REQUEST}</h3>
+			<pre id="result-request"></pre>
+			<h3>{L_RESPONSE}</h3>
+			<pre id="result-response"></pre>
+		</div>
+	</div>
+</div>

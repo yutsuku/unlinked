@@ -1,0 +1,78 @@
+		<!-- page user about/videos -->
+		<div class="channel">
+			<div class="banner" style="background-image: url({USER_BANNER_IMG});">
+				<img class="avatar" src="{USER_AVATAR}" alt="avatar">
+			</div>
+			<div class="header">
+				<h2>{USER_TITLE}</h2>
+				<div class="details">
+					<div class="fleft">
+						<a class="button<!-- IF BUTTON_ABOUT_DISABLED --> disabled<!-- ENDIF -->"<!-- IF !BUTTON_ABOUT_DISABLED --> href="{LINK_USER_ABOUT}"<!-- ENDIF -->>
+							<div class="inner">{L_ABOUT}</div>
+						</a>
+						<a class="button<!-- IF BUTTON_VIDEOS_DISABLED --> disabled<!-- ENDIF -->"<!-- IF !BUTTON_VIDEOS_DISABLED --> href="{LINK_USER_VIDES}"<!-- ENDIF -->>
+							<div class="inner">{L_VIDEOS}</div>
+						</a>
+						<a class="button" href="{LINK_YOUTUBE_PROFILE}" target="_blank">
+							<div class="inner">
+								<div class="icon link"></div>YouTube
+							</div>
+						</a>
+					</div>
+					<div class="fright stats">
+						<p title="{DATE_JOINED_RAW}">{L_JOINED} {DATE_JOINED}</p>
+						<!-- IF VIEWS -->
+						<p>{VIEWS} {L_VIEWS}</p>
+						<!-- ENDIF -->
+						<p>&nbsp;</p>
+						<p>UID: {USER_ID}</p>
+						<p>CID: {CHANNEL_ID}</p>
+						<!-- to do
+						<p>139 subscribers</p>
+						<p>2 page views</p>
+						-->
+					</div>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="contanyan">
+			<!-- IF USER_ACTION == ABOUT -->
+			<pre class="about">
+{USER_DESCRIPTION}
+			</pre>
+			<!-- ELSEIF USER_ACTION == VIDEOS -->
+			{CONTENT}
+			<!-- IF SORT_ORDER -->
+			<div class="fright">
+				<span>{L_CHANGE_SORT_ORDER}</span>
+				<a class="button" href="{LINK_SORT_ORDER}">
+					<span class="inner">{L_SORT_ORDER}</span>
+				</a>
+			</div>
+			<!-- ENDIF -->
+			<div>
+				<!-- IF LINK_PAGE_PREVIOUS -->
+				<a class="button previous fleft" href="{LINK_PAGE_PREVIOUS}">
+					<span class="inner">&laquo;</span>
+				</a>
+				<!-- ELSE -->
+				<a class="button disabled previous fleft">
+					<span class="inner">&laquo;</span>
+				</a>
+				<!-- ENDIF -->
+				<!-- IF LINK_PAGE_NEXT -->
+				<a class="button next fleft" href="{LINK_PAGE_NEXT}">
+					<span class="inner">&raquo;</span>
+				</a>
+				<!-- ELSE -->
+				<a class="button disabled next fleft">
+					<span class="inner">&raquo;</span>
+				</a>
+				<!-- ENDIF -->
+			</div>
+			<!-- pager batons need clear -->
+			<div class="clear"></div>
+			<!-- ENDIF -->
+			</div>
+		</div>
+		<!-- end page user about/videos -->

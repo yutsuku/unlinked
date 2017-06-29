@@ -1,0 +1,83 @@
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript">
+var videoid = "{VIDEO_ID}";
+var switchstate = "off";
+function getIframeCode() {
+	return "<iframe id=\"videoiframe\" width=\"853\" height=\"480\" src=\"//www.youtube-nocookie.com/embed/" + videoid + "?rel=0&vq=hd1080\" frameborder=\"0\" allowfullscreen></iframe>";
+}
+function disableButtonSelect() {
+	var buttonList = $(".button");
+	for(i=0;i<buttonList.length;++i) {
+		buttonList[i].setAttribute("onmousedown", "return false;");
+	}
+}
+function toggleDropDownMenu() {
+	$(this).find(".choice").toggleClass("hidden");
+}
+function attachOverlay() {
+	$(".overlay .contanyan").click(function(event) {
+		event.stopPropagation();
+	});
+	$(".media .video").click(function(event) {
+		//alert('show overlay');
+		$("#overlay .contanyan").html(getIframeCode());
+		$("#overlay").toggleClass("hidden");
+		event.stopPropagation();
+		// bind click on anything but our containier
+		$(document).click(function() {
+			//alert('remove overlay');
+			// re-initialize flash player since (most) browsers don't even care if its not visible
+			//var clone = $("#overlay iframe").clone();
+			$("#overlay iframe").remove();
+			//$("#overlay .contanyan").html(clone);
+			
+			$("#overlay").toggleClass("hidden");
+			$(document).unbind();
+		});
+	});
+}
+function fixCSS() {
+	$(".button:not(.disabled) .inner").mousedown(function() {
+		$(this).parent().addClass("button-jquery-fix");
+	}).mouseup(function() {
+		$(this).parent().removeClass("button-jquery-fix");
+	});
+}
+function lightswitchSetState() {
+	var css_title = get_cookie( style_cookie_name );
+	if (css_title != null) {
+		if ( css_title == style_name_2 ) {
+			switchstate = "on";
+		}
+	}
+	$("#lightswitch").removeClass("off").removeClass("on").addClass(switchstate);
+}
+function toggleLightswitch() {
+	if ( $(this).hasClass("on") ) {
+		$(this).removeClass("on").addClass("off");
+		switch_style(style_name_1);
+	} else {
+		$(this).removeClass("off").addClass("on");
+		switch_style(style_name_2);
+	}
+}
+
+$(document).ready(function() {
+	set_style_from_cookie();
+	lightswitchSetState();
+	disableButtonSelect();
+	fixCSS();
+	attachOverlay();
+	$("#lightswitch").click(toggleLightswitch);
+	$("#search .dropdown").click(toggleDropDownMenu);
+	$("#search .dropdown li").click(function() {
+		$("#search-t").val(this.getAttribute("data-value"));
+		$(this).parent().parent().parent().find(".button p").text(this.innerHTML);
+	});
+	$("#submit").click(function() {
+		$("form").submit();
+	});
+});
+</script>
+</body>
+</html>

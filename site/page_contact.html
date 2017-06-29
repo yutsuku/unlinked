@@ -1,0 +1,30 @@
+	<div class="header">
+		<h2>{L_CONTACT_US}</h2>
+	</div>
+	<div class="contanyan u_page page_contact_us">
+		<!-- IF FORM_SENT -->
+		<div class="hot-green">{L_FORM_SENT}</div>
+		<!-- ELSE -->
+		<!-- IF FORM_ERROR -->
+		<div class="hot-red">{L_FORM_ERROR}</div>
+		<!-- ENDIF -->
+		<form method="post" action="{LINK_CONTACT_US_FORM}">
+			<div>
+				<input type="text" name="name">
+				<label>{L_NAME}</label>
+			</div>
+			<div>
+				<input type="text" name="email">
+				<label>{L_EMAIL}</label>
+			</div>
+			<div>
+				<textarea name="message"></textarea>
+			</div>
+			<div>
+				<a id="submit" class="button">
+					<span class="inner">{L_SEND}</span>
+				</a>
+			</div>
+		</form>
+		<!-- ENDIF -->
+	</div>

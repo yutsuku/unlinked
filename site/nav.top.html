@@ -1,0 +1,34 @@
+		<!-- that shiny bar at the top -->
+		<header id="nav" class="bgnav">
+			<div class="valign">
+				<a class="icon" id="logo" href="./"></a>
+				<div id="search">
+					<form action="#" method="get" class="table">
+						<div class="cell">
+							<input id="search-q" type="text" name="q" value="{L_SEARCH}" onfocus="if (this.value==this.defaultValue) this.value = ''" onblur="if (this.value=='') this.value = this.defaultValue">
+							<input id="search-t" type="hidden" name="t" value="1">
+							<div class="dropdown">
+								<div class="button">
+									<div class="inner">
+										<div class="icon arrow-down"></div>
+										<div class="icon separator"></div>
+										<p>{L_VIDEO_ID}</p>
+									</div>
+								</div>
+								<div class="choice hidden">
+									<ul>
+										<li data-value="1">{L_VIDEO_ID}</li>
+										<li data-value="2">{L_TITLE}</li>
+										<li data-value="3">{L_USER}</li>
+										<li data-value="4">{L_CHANNEL}</li>
+									</ul>
+								</div>
+							</div>
+							<input type="submit" class="icon search" value="">
+						</div>
+					</form>
+				</div>
+				<a id="lightswitch" class="fright icon lightswitch off"></a>
+			</div>
+		</header>
+		<!-- end of shinny bar at the top -->
