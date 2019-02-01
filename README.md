@@ -2,6 +2,9 @@ $unlinked source code - http://yutsuku.net/unlinked/
 ====================================================
 API/Cache for YouTube video and channel informations.
 
+As of 2019/02/01, unlinked ceased to exist due to personal reasons, all files are now archived by MEGA at https://mega.nz/#F!Lr5E3S4J!QrVVUadzAg2q3fy_u-UlZA
+====================================================
+
 You're allowed to use it for learning purposes only.
 
 ![Main screen - dark](preview/1.jpg?raw=true "Main screen - dark")
